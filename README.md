@@ -2,7 +2,7 @@ Nim Version Manage
 ==================
 
 ## 0tt0matic installation
-```curl https://raw.githubusercontent.com/ekarlso/nimvm/master/install.sh | bash```
+```curl https://raw.githubusercontent.com/ekarlso/nimvm/master/scripts/install.sh | sh```
 
 ## Manual installation
 
