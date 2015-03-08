@@ -429,7 +429,9 @@ shift "$((OPTIND-1))" # Shift off the options and optional --.
 case $1 in
     install)
         install_version $2
-        use_version $2
+        if [[ "$3" == "use" ]]; then
+            use_version $2
+        fi
         ;;
     uninstall)
         remove_version $2
@@ -439,7 +441,9 @@ case $1 in
             update_version $(get_active_version)
         else
             update_version $2
-            use_version $2
+            if [[ "$3" == "use" ]]; then
+                use_version $2
+            fi
         fi
         ;;
     rebuild)
@@ -461,9 +465,9 @@ case $1 in
         ;;
     *)
         echo "Usage - Nim version manager $(nimvm_version):"
-        echo "  $0 install <version>        install version and use it"
+        echo "  $0 install <version> (use)  install version (use it)"
         echo "  $0 uninstall <version>      uninstall version"
-        echo "  $0 update (<version>)       update current (or version and use it)"
+        echo "  $0 update (<version> (use)) update current (or version (use it))"
         echo "  $0 rebuild (<version>)      rebuild current (or version and use it)"
         echo "  $0 list                     list versions"
         echo "  $0 active                   show active version"
