@@ -9,7 +9,6 @@ NIM_REPO=http://github.com/Araq/Nim.git
 NIM_DIR=${NIM_DIR:-~/.nimvm}
 NIM_BIN_DIR=${NIM_BIN_DIR:-}
 
-NIMVM_ACTIVATE=0
 NIMVM_VERSION_LINK=${NIMVM_VERSION_LINK:-1}
 
 # if version "repo" is used the directory used is $NIM_REPO_LOCATION
@@ -425,19 +424,22 @@ while getopts ":d:b:a:" opt; do
             ;;
         b)
             NIM_BIN_DIR=$OPTARG
+            shift
             ;;
         d)
             NIM_DIR=$OPTARG
+            shift
             ;;
     esac
 done
 
-shift "$((OPTIND-1))" # Shift off the options and optional --.
+# can't do that without adding the other arguments to the options!
+#shift "$((OPTIND-1))" # Shift off the options and optional --.
 
 case $1 in
     install)
         install_version $2
-        if NIMVM_ACTIVATE = 1; then
+        if [ -n "$NIM_ACTIVATE" ]; then
             use_version $2
         fi
         ;;
@@ -449,7 +451,8 @@ case $1 in
             update_version $(get_active_version)
         else
             update_version $2
-            if NIMVM_ACTIVATE = 1; then
+            echo "updating $NIM_ACTIVATE"
+            if [ -n "$NIM_ACTIVATE" ]; then
             	use_version $2
             fi
         fi
@@ -459,7 +462,7 @@ case $1 in
             rebuild_version $(get_active_version)
         else
             rebuild_version $2
-            if NIMVM_ACTIVATE = 1; then
+            if [ -n "$NIM_ACTIVATE" ]; then
             	use_version $2
             fi
         fi
