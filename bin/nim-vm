@@ -323,6 +323,7 @@ function rebuild_version() {
 
     bindir=$(get_bindir)
     if [ "$NIMVM_VERSION_LINK" = "1" ]; then
+        chmod a+x $bindir/nim.$version
         ln -nfs $version_dir/bin/nim $bindir/nim.$version
     fi
 }
