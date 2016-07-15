@@ -5,6 +5,9 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 # Nim repo to use
 NIM_REPO=http://github.com/Araq/Nim.git
 
+# Nimble repo to use
+NIMBLE_REPO=https://github.com/nim-lang/nimble.git
+
 # Where to store nim-versions
 NIM_DIR=${NIM_DIR:-~/.nimvm}
 NIM_BIN_DIR=${NIM_BIN_DIR:-}
@@ -417,6 +420,72 @@ function use_version() {
     echo "Now using $version at $bindir/nim"
 }
 
+function install_nimble() {
+    local version=master
+
+    local NIMBLE_CACHE=$NIM_DIR/nimble_cache
+    if [ ! -d $NIMBLE_CACHE ]; then
+        echo "No cacehd repository found, cloning $NIMBLE_REPO to $NIMBLE_CACHE..."
+        git_timed clone $NIMBLE_REPO $NIMBLE_CACHE
+    else
+        echo "Using cached repository $NIMBLE_CACHE"
+    fi
+
+    cd $NIMBLE_CACHE
+    git remote set-url origin $NIMBLE_REPO
+    git_timed fetch origin
+
+    # handle git_ref accordingly to type (tag, branch)
+    if [[ -n "`git show-ref refs/tags/$version`" ]]; then
+        git_update_tag $version
+    elif [[ -n "`git show-ref refs/heads/$version`" ]]; then
+        git_update_branch $version
+    elif [[ -n "`git show-ref refs/remotes/origin/$version`" ]]; then
+        git_update_remote_branch $version
+    else
+        die $LINENO "$version is neither branch nor tag"
+    fi
+
+    nim -d:release c -r src/nimble -y install
+
+    NIMBLE=$(which nimble)
+    if [ -z $NIMBLE ]; then
+        echo
+        echo "We try to add '~/.nimble/bin' to your path..."
+
+        if [ -f $HOME/.bashrc ]; then
+            # just simple adding and finger crossing
+            echo "# created by nimble installer from nim-vm" >> $HOME/.bashrc
+            echo "adding Nimble path to end of your '.bashrc'"
+            echo 'export PATH="$PATH:$HOME/.nimble/bin"' >> $HOME/.bashrc
+            echo
+            echo "Open a new shell or 'source ~/.bashrc' to use it."
+            echo
+            echo "Important: Don't run the command againg in this shell!"
+            PATH="$PATH:$HOME/.nimble/bin"
+        elif [ -f $HOME/.profile ]; then
+            # Best way for OSX
+            echo "creating '~/.bashrc' with Nimble path and add it to '~/.profile'"
+            echo "# created by nimble installer from nim-vm" >> $HOME/.bashrc
+            echo 'export PATH="$PATH:$HOME/.nimble/bin"' >> $HOME/.bashrc
+            echo "# created by nimble installer from nim-vm" >> $HOME/.profile
+            echo 'if [ -f ~/.bashrc ]; then . ~/.bashrc; fi' >> $HOME/.profile
+            echo
+            echo "Open a new shell or 'source ~/.bashrc' to use it."
+            echo
+            echo "Important: Don't run the command againg in this shell!"
+            PATH="$PATH:$HOME/.nimble/bin"
+        else
+            echo "Could not add the path automatically!"
+        fi
+
+        NIMBLE=$(which nimble)
+        if [ -z $NIMBLE ]; then
+            echo "Sorry, you need to manually set the path for your shell!"
+        fi
+    fi
+}
+
 while getopts ":d:b:a" opt; do
     case "${opt}" in
         a)
@@ -463,6 +532,9 @@ case $1 in
             fi
         fi
         ;;
+    nimble)
+        install_nimble
+        ;;
     list)
         list_versions
         ;;
@@ -481,5 +553,6 @@ case $1 in
         echo "  $0 list                     list versions"
         echo "  $0 active                   show active version"
         echo "  $0 activate|use             use a version"
+        echo "  $0 nimble                   download, compile and install Nimble (experimental)"
         ;;
 esac

@@ -25,6 +25,7 @@ nim-vm list            # lists all installed versions
 nim-vm use v0.10.2     # switches to latest release
 nim-vm use devel       # switches to the development version
 nim-vm update          # updates the development version from development repo
+nim-vm nimble          # downloads, compiles and installs the Nimble package manager
 ```
 
 You can also set the env variable `$NIM_REPO_LOCATION` which then acts as version `repo`
