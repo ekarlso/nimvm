@@ -438,6 +438,8 @@ function use_version() {
     ln -nfs $version_dir/bin/nimgrep $bindir/nimgrep
     ln -nfs $version_dir/bin/nimpretty $bindir/nimpretty
     ln -nfs $version_dir/bin/nimsuggest $bindir/nimsuggest
+    # Link lib directory
+    ln -nfs $version_dir/lib $NIM_DIR/lib
 
     echo "Now using $version at $bindir/nim"
 }
