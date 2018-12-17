@@ -193,6 +193,7 @@ function koch_build() {
     fi
 
     ./koch boot $KOCH_FLAGS
+    ./koch tools $KOCH_FLAGS
 
     case "$1" in
         (v0.9.*)
@@ -262,6 +263,12 @@ function install_version() {
     bindir=$(get_bindir)
     if [ "$NIMVM_VERSION_LINK" = "1" ]; then
         ln -nfs $version_dir/bin/nim $bindir/nim.$version
+        ln -nfs $version_dir/bin/nimble $bindir/nimble.$version
+        ln -nfs $version_dir/bin/nimfind $bindir/nimfind.$version
+        ln -nfs $version_dir/bin/nim-gdb $bindir/nim-gdb.$version
+        ln -nfs $version_dir/bin/nimgrep $bindir/nimgrep.$version
+        ln -nfs $version_dir/bin/nimpretty $bindir/nimpretty.$version
+        ln -nfs $version_dir/bin/nimsuggest $bindir/nimsuggest.$version
     fi
 }
 
@@ -301,6 +308,12 @@ function update_version() {
     bindir=$(get_bindir)
     if [ "$NIMVM_VERSION_LINK" = "1" ]; then
         ln -nfs $version_dir/bin/nim $bindir/nim.$version
+        ln -nfs $version_dir/bin/nimble $bindir/nimble.$version
+        ln -nfs $version_dir/bin/nimfind $bindir/nimfind.$version
+        ln -nfs $version_dir/bin/nim-gdb $bindir/nim-gdb.$version
+        ln -nfs $version_dir/bin/nimgrep $bindir/nimgrep.$version
+        ln -nfs $version_dir/bin/nimpretty $bindir/nimpretty.$version
+        ln -nfs $version_dir/bin/nimsuggest $bindir/nimsuggest.$version
     fi
 }
 
@@ -324,6 +337,12 @@ function rebuild_version() {
     bindir=$(get_bindir)
     if [ "$NIMVM_VERSION_LINK" = "1" ]; then
         ln -nfs $version_dir/bin/nim $bindir/nim.$version
+        ln -nfs $version_dir/bin/nimble $bindir/nimble.$version
+        ln -nfs $version_dir/bin/nimfind $bindir/nimfind.$version
+        ln -nfs $version_dir/bin/nim-gdb $bindir/nim-gdb.$version
+        ln -nfs $version_dir/bin/nimgrep $bindir/nimgrep.$version
+        ln -nfs $version_dir/bin/nimpretty $bindir/nimpretty.$version
+        ln -nfs $version_dir/bin/nimsuggest $bindir/nimsuggest.$version
     fi
 }
 
@@ -413,6 +432,14 @@ function use_version() {
 
     [ -w "$bindir/nim" ] && rm $bindir/nim
     ln -s $version_dir/bin/nim $bindir/nim
+    ln -nfs $version_dir/bin/nimble $bindir/nimble
+    ln -nfs $version_dir/bin/nimfind $bindir/nimfind
+    ln -nfs $version_dir/bin/nim-gdb $bindir/nim-gdb
+    ln -nfs $version_dir/bin/nimgrep $bindir/nimgrep
+    ln -nfs $version_dir/bin/nimpretty $bindir/nimpretty
+    ln -nfs $version_dir/bin/nimsuggest $bindir/nimsuggest
+    # Link lib directory
+    ln -nfs $version_dir/lib $NIM_DIR/lib
 
     echo "Now using $version at $bindir/nim"
 }
@@ -449,7 +476,7 @@ case $1 in
         else
             update_version $2
             if [ "$NIMVM_ACTIVATE" = "1" ]; then
-            	use_version $2
+                use_version $2
             fi
         fi
         ;;
@@ -459,7 +486,7 @@ case $1 in
         else
             rebuild_version $2
             if [ "$NIMVM_ACTIVATE" = "1" ]; then
-            	use_version $2
+                use_version $2
             fi
         fi
         ;;
